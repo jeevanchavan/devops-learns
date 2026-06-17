@@ -1,26 +1,33 @@
-import express from 'express'
-import morgan from 'morgan'
+import express from 'express';
+import morgan from 'morgan';
+import cors from 'cors';
 
-const app = express()
+const app = express();
+app.use(morgan('dev'));
+app.use(express.static('public'));
 
-const PORT = 3000
+app.get("/api/health", (req, res) => {
+    res.status(200).json({ status: "OK" });
+});
 
-app.use(morgan('dev'))
+app.get("/api/hello", (req, res) => {
+    res.status(200).json({ message: "Hello, World!" });
+});
 
-
-app.get('/',(req,res)=>{
-    return res.status(200).json({
-        message:"health check",
-    })
+app.get("/api/users", (req, res) => {
+    const users = [
+        { id: 1, name: "Alice" },
+        { id: 2, name: "Bob" },
+        { id: 3, name: "Charlie" },
+        { id: 4, name: "David" },
+    ];
+    res.status(200).json(users);
 })
 
-app.get("/api/users",(req,res)=>{
-    res.json({
-        message:"This is Emliy"
-    })
-})
+app.get("*name", (req, res) => {
+    res.sendFile("public/index.html", { root: __dirname });
+});
 
-
-app.listen(PORT,()=>{
-    console.log(`server is listening at port ${PORT}`);
-})
+app.listen(3000, () => {
+    console.log("Server is running on port 3000");
+});
